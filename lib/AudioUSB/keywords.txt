@@ -1,0 +1,27 @@
+#######################################
+# Syntax Coloring Map For Keyboard
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+AudioUSB	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin		KEYWORD2
+available	KEYWORD2
+accept		KEYWORD2
+read		KEYWORD2
+flush   	KEYWORD2
+sendAudio   	KEYWORD2
+write   	KEYWORD2
+sendAudio 	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+

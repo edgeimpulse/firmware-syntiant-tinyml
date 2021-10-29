@@ -1,0 +1,76 @@
+#######################################
+# Syntax Coloring Map For Arduino_PMIC
+####################################### 
+# Class
+#######################################
+
+Arduino_PMIC	KEYWORD1
+PMICClass	KEYWORD1
+PMIC	KEYWORD1
+
+#######################################
+# Methods and Functions 
+#######################################	
+
+begin	KEYWORD2
+end	KEYWORD2
+enableBuck	KEYWORD2
+disableBuck	KEYWORD2
+setInputCurrentLimit	KEYWORD2
+getInputCurrentLimit	KEYWORD2
+setInputVoltageLimit	KEYWORD2
+getInputVoltageLimit	KEYWORD2
+enableCharge	KEYWORD2
+enableBoostMode	KEYWORD2
+disableCharge	KEYWORD2
+resetWatchdog	KEYWORD2
+setMinimumSystemVoltage	KEYWORD2
+getMinimumSystemVoltage	KEYWORD2
+setChargeCurrent	KEYWORD2
+getChargeCurrent	KEYWORD2
+setPreChargeCurrent	KEYWORD2
+getPreChargeCurrent	KEYWORD2
+setTermChargeCurrent	KEYWORD2
+getTermChargeCurrent	KEYWORD2
+setChargeVoltage	KEYWORD2
+getChargeVoltage	KEYWORD2
+disableWatchdog	KEYWORD2
+enableDPDM	KEYWORD2
+disableDPDM	KEYWORD2
+enableBATFET	KEYWORD2
+disableBATFET	KEYWORD2
+USBmode	KEYWORD2
+isCharging	KEYWORD2
+isBattConnected	KEYWORD2
+isPowerGood	KEYWORD2
+isHot	KEYWORD2
+canRunOnBattery	KEYWORD2
+isWatchdogExpired	KEYWORD2
+getChargeFault	KEYWORD2
+isBatteryInOverVoltage	KEYWORD2
+hasBatteryTemperatureFault	KEYWORD2
+
+#######################################
+# Constants
+#######################################
+
+NO_CHARGE_FAULT	LITERAL1
+INPUT_OVER_VOLTAGE	LITERAL1
+THERMAL_SHUTDOWN	LITERAL1
+CHARGE_SAFETY_TIME_EXPIRED	LITERAL1
+
+NO_TEMPERATURE_FAULT	LITERAL1
+LOWER_THRESHOLD_TEMPERATURE_FAULT	LITERAL1
+HIGHER_THRESHOLD_TEMPERATURE_FAULT	LITERAL1
+
+NOT_CHARGING	LITERAL1
+PRE_CHARGING	LITERAL1
+FAST_CHARGING	LITERAL1
+CHARGE_TERMINATION_DONE	LITERAL1
+
+UNKNOWM_MODE	LITERAL1
+USB_HOST_MODE	LITERAL1
+ADAPTER_PORT_MODE	LITERAL1
+BOOST_MODE	LITERAL1
+
+PMIC_IRQ_PIN LITERAL1

@@ -1,0 +1,5 @@
+#build output files
+*.bin
+*.elf
+*.map
+*.hex
