@@ -266,7 +266,7 @@ bool ei_at_cmd_handle(const char *cmd_in) {
 
     // now do some command parsing...
     if (strlen(cmd) < 4 || cmd[0] != 'A' || cmd[1] != 'T' || cmd[2] != '+') {
-        ei_printf("Not a valid AT command (%s)\n", cmd);
+        ei_printf("Not a valid AT command (%s)\r\n", cmd);
         goto clear_up;
     }
 
@@ -326,7 +326,7 @@ bool ei_at_cmd_handle(const char *cmd_in) {
     // alright, arg_count is always > 0 because the strlen check on cmd earlier, but double-check
     // just in case someone changes that code
     if (arg_count == 0) {
-        ei_printf("Not a valid AT command (%s)\n", cmd);
+        ei_printf("Not a valid AT command (%s)\r\n", cmd);
         goto clear_up;
     }
 

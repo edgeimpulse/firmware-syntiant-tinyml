@@ -51,121 +51,87 @@ void readFrom(int device, byte address, int num, byte buff[])
     Wire.requestFrom(device, num);  // request num bytes from device
 
     int i = 0;
-    while (Wire.available())
-    {                          // device may send less than requested (abnormal)
+    while (Wire.available())  {
         buff[i] = Wire.read(); // receive a byte
         i++;
     }
+    // device may send less than requested (abnormal)
     Wire.endTransmission(); // end transmission
 }
 
 void printPmu()
 {
-    Serial2.print("bq24195L Registers - ");
+    Serial.print("SGM41512 Registers - ");
 
     byte buff[10];
-    for (byte i = 0; i < 0xb; i++)
-    {
-        readFrom(BQ24195L, i, 1, buff);
-        Serial2.print(i);
-        Serial2.print(" = 0x");
-        Serial2.print(buff[0], HEX);
-        Serial2.print(", ");
+    for (byte i = 0; i < 0xc; i++) { // SGM41512 has 11 registers.
+        readFrom(SGM41512, i, 1, buff);
+        Serial.print(i);
+        Serial.print(" = 0x");
+        Serial.print(buff[0], HEX);
+        Serial.print(", ");
     }
-    Serial2.println("");
+    Serial.println("");
 }
 
 // Print LiPo battery voltage. Maximum (3v7) should give 0x3ff
 void printBattery()
 {
-    Serial2.print("Battery = ");
-    Serial2.print(100 * analogRead(ADC_BATTERY) / 0x3ff);
-    Serial2.println("%");
+    Serial.print("Battery = ");
+    Serial.print(100 * analogRead(ADC_BATTERY) / 0x3ff);
+    Serial.println("%");
 }
 
 // Set PMU into Boost mode. This generates 5v on the PMU PMD pin
 void pmuBoost()
 {
-    Serial2.println("Reseting PMU Registers");
+    //Serial.println("Reseting PMU Registers");
 
     // reset PMU registers
-    writeTo(BQ24195L, POWER_ON_CONFIG, 0x80);
+    writeTo(SGM41512, RESET_AND_VERSION_REG, 0xAC);
 
-    Serial2.println("Enabling Boost Mode");
+    Serial.println("Enabling boost mode");
 
     // Set PMU_OTG pin high to enable boost mode
     digitalWrite(PMU_OTG, HIGH);
+    digitalWrite(ENABLE_5V, HIGH);
 
-    if (!PMIC.begin())
-    {
-        Serial2.println("Failed to initialize PMIC!");
+    if (!PMIC.begin()) {
+        Serial.println("Failed to initialize PMIC!");
         return;
     }
 
     // Enable boost mode, this mode allow to use the board as host and
     // connect guest device like keyboard
-    if (!PMIC.enableBoostMode())
-    {
-        Serial2.println("Error enabling Boost Mode");
-    }
-    else
-    {
-        Serial2.println("Boost Mode Enabled");
+    if (!PMIC.enableBoostMode())  {
+        Serial.println("Error enabling boost mode");
     }
 
     // disable watchdog
-    writeTo(BQ24195L, CHARGE_TERMINATION_TIMER_CTL, 0xa);
-    printPmu();
+    PMIC.disableWatchdog();
 }
 
 // Place PMU into PiPo charge mode. This cancels boost mode (if activated)
 void pmuCharge()
 {
-    Serial2.println("Reseting PMU Registers");
-
     // reset PMU registers
-    writeTo(BQ24195L, POWER_ON_CONFIG, 0x80);
+    writeTo(SGM41512, RESET_AND_VERSION_REG, 0xAC);
+
+    Serial.println("Enabling battery charging mode");
 
     // Set OTB low (no boost mode). Disable 5v out
-    digitalWrite(PMU_OTG, HIGH);
-    // digitalWrite(ENABLE_5V, LOW);
+    //digitalWrite(PMU_OTG, HIGH);
+    digitalWrite(ENABLE_5V, LOW);
 
-    // Set the input current limit to 2 A and the overload input voltage to 3.88 V
-    if (!PMIC.setInputCurrentLimit(2.0))
-    {
-        Serial2.println("Error in set input current limit");
-    }
-
-    if (!PMIC.setInputVoltageLimit(3.88))
-    {
-        Serial2.println("Error in set input voltage limit");
-    }
-
-    // set the minimum voltage used to feeding the module embed on Board
-    if (!PMIC.setMinimumSystemVoltage(3.5))
-    {
-        Serial2.println("Error in set minimum system volage");
-    }
-
-    // Set the desired charge voltage to 4.11 V
-    if (!PMIC.setChargeVoltage(4.2))
-    {
-        Serial2.println("Error in set charge volage");
-    }
-
-    // Set the charge current to 375 mA
-    // the charge current should be definde as maximum at (C for hour)/2h
-    // to avoid battery explosion (for example for a 750mAh battery set to 0.375 A)
-    if (!PMIC.setChargeCurrent(0.375))
-    {
-        Serial2.println("Error in set charge current");
-    }
-
+    // Reseting the registers set the voltage/current limit
+    // and charge voltage correctly
+  
+    // Set the charge current to 180mA
+    writeTo(SGM41512, CHARGE_CURRENT_CTL_REG, 0x83);
     // Enable the Charger
-    if (!PMIC.enableCharge())
-    {
-        Serial2.println("Error enabling Charge mode");
+    if (!PMIC.enableCharge()) {
+        Serial.println("Error enabling battery charging mode");
     }
-
-    printPmu();
+    // disable watchdog
+    PMIC.disableWatchdog();
 }

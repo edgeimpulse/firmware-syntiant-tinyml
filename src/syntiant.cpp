@@ -93,6 +93,15 @@ const byte NDP_RESET = '@';
 const byte COPY_SD_TO_FLASH = 'F';
 const byte ERASE_SD_CARD = 'e';
 const byte FAT_FORMAT_SD_CARD = 'f';
+const byte PMIC_MODE_CHANGE = 'p';
+
+// Sample Tank addresses
+// includes tank size[17] from bits 4 - 21
+const uint32_t DSP_CONFIG_TANK = 0x4000c0a8;
+const uint32_t DSP_CONFIG_FREQSTS0 = 0x4000c0ac;
+const uint32_t DSP_CONFIG_TANKADDR = 0x4000c0b0;
+const uint32_t DSP_CONFIG_TANKSTS0 = 0x4000c0b4;
+const uint32_t DSP_CONFIG_TANKSTS1 = 0x4000c0b8;
 
 const byte NDP9101_USB_IDLE = 0xC0; // When USB is diconnected, the USN n/p lines
                                     // are pulled high. This indicated the device is
@@ -157,6 +166,9 @@ File myFile;
 SerialFlashFile mySerialFlashFile;
 
 int16_t audioBuf[32]; // Audio Buffer
+uint32_t tankAddress = 0;
+uint32_t tankSize = 0;
+uint32_t currentPointer = 0;
 
 byte LastUserSwitch = 1;
 uint32_t SAVE_REG_SYSCTRL_DFLLCTRL = 0xA46;
@@ -241,13 +253,13 @@ void isrTimer4(struct tc_module *const module_inst)
     int s;
     unsigned int len;
 
-    byte temp = digitalRead(USER_SWITCH);
-    if (temp != LastUserSwitch)
-    {
-        Serial2.print("User Switch = ");
-        Serial2.println(temp ? "RELEASED" : "PRESSED");
-        LastUserSwitch = temp;
-    }
+    // byte temp = digitalRead(USER_SWITCH);
+    // if (temp != LastUserSwitch)
+    // {
+    //     Serial2.print("User Switch = ");
+    //     Serial2.println(temp ? "RELEASED" : "PRESSED");
+    //     LastUserSwitch = temp;
+    // }
 
     SCB->SCR &= !SCB_SCR_SLEEPDEEP_Msk; // Don't Allow Deep Sleep
     if ((ledTimerCount < 0xffff) && (ledTimerCount > 0))
@@ -261,14 +273,22 @@ void isrTimer4(struct tc_module *const module_inst)
 
 
 #ifdef WITH_AUDIO
-    if (runningFromFlash) {
-        len = sizeof(audioBuf);
-        s = NDP.extractData((uint8_t *) audioBuf, &len);
-        len = min(sizeof(audioBuf), len);
-    } else {
-        len = 32;
+    if (runningFromFlash)
+    {
+        uint32_t tankRead;
+        int i;
+
+        for (i = 0; i < 32; i += 4)
+        {
+            tankRead =
+                indirectRead(tankAddress + ((currentPointer - 32 + i) % tankSize));
+            audioBuf[i / 2] = tankRead & 0xffff;
+            audioBuf[(i / 2) + 1] = (tankRead >> 16) & 0xffff;
+        }
+        currentPointer += 32;
+        currentPointer %= tankSize;
     }
-    AudioUSB.write(audioBuf, len); // Write samples to AudioUSB
+    AudioUSB.write(audioBuf, 32); // write samples to AudioUSB
 #endif
 
     if (doInt)
@@ -398,6 +418,7 @@ void syntiant_setup(void)
             // Assign pins PA20 & PA21 to SERCOM functionality.
             pinPeripheral(6, PIO_SERCOM_ALT);
             pinPeripheral(7, PIO_SERCOM_ALT);
+            delay(100);
             Serial2.println("Hello Serial2 World!");
 
             pinMode(LED_BLUE, OUTPUT);
@@ -422,17 +443,14 @@ void syntiant_setup(void)
             pinMode(PMU_OTG, OUTPUT);   // set up OTG/PMU current pin
             pinMode(ENABLE_5V, OUTPUT); // Set up 5v gate
 
-            // initialise BQ24195
-            if (!PMIC.begin())
-            {
+            // Initialise SGM41512
+            if (!PMIC.begin()) {
                 Serial2.println("Failed to initialize PMIC!");
             }
-
-            writeTo(BQ24195L, CHARGE_TERMINATION_TIMER_CTL, 0xa); // disable PMU watchdog
+            pmuCharge(); // Enable PMU Charge mode
 
             pinMode(0, OUTPUT);
             pinMode(1, OUTPUT);
-
             idle = TINYML_USB_IDLE;
         }
 
@@ -520,6 +538,9 @@ void syntiant_setup(void)
     // possible priority.
     NVIC_SetPriority(TC4_IRQn, 3); // Make timer 4 the lowest priority
 
+    tankSize = indirectRead(DSP_CONFIG_TANK) >> 4;
+    tankAddress = indirectRead(DSP_CONFIG_TANKADDR);
+
     // Load Audio Buffer with test pattern
     for (i = 0; i < sizeof(audioBuf) / 2; i++) {
         audioBuf[i] = 4000 * (i - (sizeof(audioBuf) / 4));
@@ -529,7 +550,7 @@ void syntiant_setup(void)
 #if defined(WITH_AUDIO)
     AudioUSB.getShortName(namep); // needed for platformio to load AudioUSB
 #endif
-    Serial2.println("setup done");
+    Serial.println("setup done");
 
     timer4.enable(true); // enable 1mS timer interrupt
 
@@ -924,6 +945,15 @@ void runManagementCommand(void)
             Serial.println();
         Serial.print("patch applied: ");
         Serial.println(patchApplied > 0 ? "yes" : "no");
+        // PMIC status
+        if(PMIC.getOperationMode()) {
+            Serial.println("PMIC is in boost mode");
+        } else {
+            Serial.println("PMIC is in charging mode");
+            Serial.print("Charge Status = 0x");
+            Serial.println(PMIC.chargeStatus(), HEX);
+        }
+        printBattery(); // Print current battery level
         break;
 
     case SAMD_RESET:
@@ -946,6 +976,22 @@ void runManagementCommand(void)
 
     case FAT_FORMAT_SD_CARD:
         fatFormatSd();
+        break;
+
+    case PMIC_MODE_CHANGE:
+        if(PMIC.getOperationMode()) {
+            pmuCharge(); // Enable PMU Charge mode
+            if (FlashType[0] == SST25VF016B)
+                digitalWrite(ENABLE_5V, LOW); // Disable 5v output
+            Serial.print("Charge Status = 0x");
+            Serial.println(PMIC.chargeStatus(), HEX);
+        } else {
+            pmuBoost(); // Enable PMU Boost mode
+            // Set output to 5.08v
+            if (FlashType[0] == SST25VF016B)
+                digitalWrite(ENABLE_5V, HIGH); // Enable 5v output
+        }
+        printPmu();
         break;
 
     case ERASE_SD_CARD:

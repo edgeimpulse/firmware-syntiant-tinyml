@@ -28,6 +28,7 @@
 #include "repl/at_cmds.h"
 #include "ingestion-sdk-platform/syntiant/ei_syntiant_fs_commands.h"
 #include "model-parameters/model_metadata.h"
+#include "model-parameters/model_variables.h"
 
 /* Extern declared function ------------------------------------------------ */
 extern void on_classification_changed(const char *event, float confidence, float anomaly_score);

@@ -28,10 +28,10 @@
 #include "../ingestion-sdk-c/ei_config.h"
 
 
-#define EDGE_IMPULSE_AT_COMMAND_VERSION        "1.3.0"
+#define EDGE_IMPULSE_AT_COMMAND_VERSION        "1.6.0"
 
 static void at_clear_config() {
-    ei_printf("Clearing config and restarting system...\n");
+    ei_printf("Clearing config and restarting system...\r\n");
     ei_config_clear();
 //    NVIC_SystemReset();
 }
@@ -42,7 +42,7 @@ static void at_device_info() {
     int r = ei_config_get_device_id(id_buffer, &id_size);
     if (r == EI_CONFIG_OK) {
         id_buffer[id_size] = 0;
-        ei_printf("ID:         %s\n", id_buffer);
+        ei_printf("ID:         %s\r\n", id_buffer);
     }
     if (ei_config_get_context()->get_device_type == NULL) {
         return;
@@ -50,9 +50,9 @@ static void at_device_info() {
     r = ei_config_get_context()->get_device_type(id_buffer, &id_size);
     if (r == EI_CONFIG_OK) {
         id_buffer[id_size] = 0;
-        ei_printf("Type:       %s\n", id_buffer);
+        ei_printf("Type:       %s\r\n", id_buffer);
     }
-    ei_printf("AT Version: %s\n", EDGE_IMPULSE_AT_COMMAND_VERSION);
+    ei_printf("AT Version: %s\r\n", EDGE_IMPULSE_AT_COMMAND_VERSION);
 }
 
 static void at_get_wifi() {
@@ -63,22 +63,22 @@ static void at_get_wifi() {
 
     EI_CONFIG_ERROR r = ei_config_get_wifi(&ssid, &password, &security, &connected, &present);
     if (r != EI_CONFIG_OK) {
-        ei_printf("Failed to retrieve WiFi config (%d)\n", r);
+        ei_printf("Failed to retrieve WiFi config (%d)\r\n", r);
         return;
     }
-    ei_printf("SSID:      %s\n", ssid);
-    ei_printf("Password:  %s\n", password);
-    ei_printf("Security:  %d\n", security);
+    ei_printf("SSID:      %s\r\n", ssid);
+    ei_printf("Password:  %s\r\n", password);
+    ei_printf("Security:  %d\r\n", security);
 
     uint8_t mac_buffer[32] = { 0 };
     size_t mac_size;
     r = ei_config_get_device_id(mac_buffer, &mac_size);
     if (r == EI_CONFIG_OK) {
         mac_buffer[mac_size] = 0;
-        ei_printf("MAC:       %s\n", mac_buffer);
+        ei_printf("MAC:       %s\r\n", mac_buffer);
     }
-    ei_printf("Connected: %d\n", connected);
-    ei_printf("Present:   %d\n", present);
+    ei_printf("Connected: %d\r\n", connected);
+    ei_printf("Present:   %d\r\n", present);
 }
 
 static void at_set_wifi(char *ssid, char *password, char *security_s) {
@@ -86,10 +86,10 @@ static void at_set_wifi(char *ssid, char *password, char *security_s) {
 
     EI_CONFIG_ERROR r = ei_config_set_wifi(ssid, password, security);
     if (r != EI_CONFIG_OK) {
-        ei_printf("Failed to persist WiFi config (%d)\n", r);
+        ei_printf("Failed to persist WiFi config (%d)\r\n", r);
     }
     else {
-        ei_printf("OK\n");
+        ei_printf("OK\r\n");
     }
 }
 
@@ -101,15 +101,15 @@ static void at_get_sample_settings() {
 
     EI_CONFIG_ERROR r = ei_config_get_sample_settings(&label, &interval, &length, &hmac_key);
     if (r != EI_CONFIG_OK) {
-        ei_printf("Failed to retrieve sample settings (%d)\n", r);
+        ei_printf("Failed to retrieve sample settings (%d)\r\n", r);
         return;
     }
-    ei_printf("Label:     %s\n", label);
+    ei_printf("Label:     %s\r\n", label);
     ei_printf("Interval:  ");
     ei_printf_float((float)interval);
-    ei_printf("ms.\n");;
-    ei_printf("Length:    %lu ms.\n", length);
-    ei_printf("HMAC key:  %s\n", hmac_key);
+    ei_printf("ms.\r\n");;
+    ei_printf("Length:    %lu ms.\r\n", length);
+    ei_printf("HMAC key:  %s\r\n", hmac_key);
 }
 
 static void at_set_sample_settings(char *label, char *interval_s, char *length_s) {
@@ -117,10 +117,10 @@ static void at_set_sample_settings(char *label, char *interval_s, char *length_s
     uint32_t length = (uint32_t)atoi(length_s);
     EI_CONFIG_ERROR r = ei_config_set_sample_settings(label, interval, length);
     if (r != EI_CONFIG_OK) {
-        ei_printf("Failed to persist sampling settings (%d)\n", r);
+        ei_printf("Failed to persist sampling settings (%d)\r\n", r);
     }
     else {
-        ei_printf("OK\n");
+        ei_printf("OK\r\n");
     }
 }
 
@@ -129,10 +129,10 @@ static void at_set_sample_settings_w_hmac(char *label, char *interval_s, char *l
     uint32_t length = (uint32_t)atoi(length_s);
     EI_CONFIG_ERROR r = ei_config_set_sample_settings(label, interval, length, hmac_key);
     if (r != EI_CONFIG_OK) {
-        ei_printf("Failed to persist sampling settings (%d)\n", r);
+        ei_printf("Failed to persist sampling settings (%d)\r\n", r);
     }
     else {
-        ei_printf("OK\n");
+        ei_printf("OK\r\n");
     }
 }
 
@@ -143,31 +143,31 @@ static void at_get_upload_settings() {
 
     EI_CONFIG_ERROR r = ei_config_get_upload_settings(&api_key, &host, &path);
     if (r != EI_CONFIG_OK) {
-        ei_printf("Failed to retrieve upload settings (%d)\n", r);
+        ei_printf("Failed to retrieve upload settings (%d)\r\n", r);
         return;
     }
-    ei_printf("Api Key:   %s\n", api_key);
-    ei_printf("Host:      %s\n", host);
-    ei_printf("Path:      %s\n", path);
+    ei_printf("Api Key:   %s\r\n", api_key);
+    ei_printf("Host:      %s\r\n", host);
+    ei_printf("Path:      %s\r\n", path);
 }
 
 static void at_set_upload_host(char *host) {
     EI_CONFIG_ERROR r = ei_config_set_upload_host_settings(host);
     if (r != EI_CONFIG_OK) {
-        ei_printf("Failed to persist upload settings (%d)\n", r);
+        ei_printf("Failed to persist upload settings (%d)\r\n", r);
     }
     else {
-        ei_printf("OK\n");
+        ei_printf("OK\r\n");
     }
 }
 
 static void at_set_upload_settings(char *api_key, char *url) {
     EI_CONFIG_ERROR r = ei_config_set_upload_path_settings(api_key, url);
     if (r != EI_CONFIG_OK) {
-        ei_printf("Failed to persist upload settings (%d)\n", r);
+        ei_printf("Failed to persist upload settings (%d)\r\n", r);
     }
     else {
-        ei_printf("OK\n");
+        ei_printf("OK\r\n");
     }
 }
 
@@ -178,21 +178,21 @@ static void at_get_mgmt_settings() {
 
     EI_CONFIG_ERROR r = ei_config_get_mgmt_settings(&mgmt_url, &is_connected, last_error, 128);
     if (r != EI_CONFIG_OK) {
-        ei_printf("Failed to retrieve management settings (%d)\n", r);
+        ei_printf("Failed to retrieve management settings (%d)\r\n", r);
         return;
     }
-    ei_printf("URL:        %s\n", mgmt_url);
-    ei_printf("Connected:  %d\n", is_connected);
-    ei_printf("Last error: %s\n", last_error);
+    ei_printf("URL:        %s\r\n", mgmt_url);
+    ei_printf("Connected:  %d\r\n", is_connected);
+    ei_printf("Last error: %s\r\n", last_error);
 }
 
 static void at_set_mgmt_settings(char *mgmt_url) {
     EI_CONFIG_ERROR r = ei_config_set_mgmt_settings(mgmt_url);
     if (r != EI_CONFIG_OK) {
-        ei_printf("Failed to persist management settings (%d)\n", r);
+        ei_printf("Failed to persist management settings (%d)\r\n", r);
     }
     else {
-        ei_printf("OK\n");
+        ei_printf("OK\r\n");
     }
 }
 
@@ -203,7 +203,7 @@ static void at_list_sensors() {
     
     int r = EiDevice.get_sensor_list((const ei_device_sensor_t **)&list, &list_size);
     if (r != 0) {
-        ei_printf("Failed to get sensor list (%d)\n", r);
+        ei_printf("Failed to get sensor list (%d)\r\n", r);
         return;
     }
 
@@ -218,33 +218,33 @@ static void at_list_sensors() {
                 ei_printf("Hz");
             }
         }
-        ei_printf("]\n");
+        ei_printf("]\r\n");
     }
 }
 
 static void at_list_config() {
-    ei_printf("===== Device info =====\n");
+    ei_printf("===== Device info =====\r\n");
     at_device_info();
-    ei_printf("\n");
-    ei_printf("===== Sensors ======\n");
+    ei_printf("\r\n");
+    ei_printf("===== Sensors ======\r\n");
     at_list_sensors();
-    ei_printf("\n");
-    ei_printf("===== WIFI =====\n");
+    ei_printf("\r\n");
+    ei_printf("===== WIFI =====\r\n");
     at_get_wifi();
-    ei_printf("\n");
-    ei_printf("===== Sampling parameters =====\n");
+    ei_printf("\r\n");
+    ei_printf("===== Sampling parameters =====\r\n");
     at_get_sample_settings();
-    ei_printf("\n");
-    ei_printf("===== Upload settings =====\n");
+    ei_printf("\r\n");
+    ei_printf("===== Upload settings =====\r\n");
     at_get_upload_settings();
-    ei_printf("\n");
-    ei_printf("===== Remote management =====\n");
+    ei_printf("\r\n");
+    ei_printf("===== Remote management =====\r\n");
     at_get_mgmt_settings();
-    ei_printf("\n");
+    ei_printf("\r\n");
 }
 
 static void at_list_files_data(char *name) {
-    ei_printf("%s\n", name);
+    ei_printf("%s\r\n", name);
 }
 
 static void at_list_files() {
@@ -255,13 +255,13 @@ static void at_read_file_data(uint8_t *buffer, size_t size) {
     //char *base64_buffer = (char*)calloc((size / 3 * 4) + 4, 1);
     static char base64_buffer[(513 / 3 * 4) + 4];
     if (!base64_buffer) {
-        ei_printf("ERR: Cannot allocate base64 buffer of size %lu, out of memory\n", (size / 3 * 4) + 4);
+        ei_printf("ERR: Cannot allocate base64 buffer of size %lu, out of memory\r\n", (size / 3 * 4) + 4);
         return;
     }
 
     int r = base64_encode((const char*)buffer, size, base64_buffer, (size / 3 * 4) + 4);
     if (r < 0) {
-        ei_printf("ERR: Failed to base64 encode (%d)\n", r);
+        ei_printf("ERR: Failed to base64 encode (%d)\r\n", r);
         return;
     }
     
@@ -273,10 +273,10 @@ static void at_read_file_data(uint8_t *buffer, size_t size) {
 static void at_read_file(char *filename) {
     bool exists = ei_config_get_context()->read_file(filename, at_read_file_data);
     if (!exists) {
-        ei_printf("File '%s' does not exist\n", filename);
+        ei_printf("File '%s' does not exist\r\n", filename);
     }
     else {
-        ei_printf("\n");
+        ei_printf("\r\n");
     }
 }
 
@@ -286,10 +286,10 @@ static void at_read_buffer(char *start_s, char *length_s) {
 
     bool success = ei_config_get_context()->read_buffer(start, length, at_read_file_data);
     if (!success) {
-        ei_printf("Failed to read from buffer\n");
+        ei_printf("Failed to read from buffer\r\n");
     }
     else {
-        ei_printf("\n");
+        ei_printf("\r\n");
     }
 }
 
@@ -314,7 +314,7 @@ static void at_read_raw(char *start_s, char *length_s) {
 static void at_unlink_file(char *filename) {
     // bool success = ei_config_get_context()->unlink_file(filename);
     // if (success) {
-        ei_printf("\n");
+        ei_printf("\r\n");
     // }
     // else {
     //     ei_printf("File '%s' could not be unlinked\n", filename);
@@ -390,7 +390,7 @@ static void at_sample_start(char *sensor_name) {
 
     int r = EiDevice.get_sensor_list((const ei_device_sensor_t **)&list, &list_size);
     if (r != 0) {
-        ei_printf("Failed to get sensor list (%d)\n", r);
+        ei_printf("Failed to get sensor list (%d)\r\n", r);
         return;
     }
 
@@ -398,26 +398,26 @@ static void at_sample_start(char *sensor_name) {
         if (strcmp(list[ix].name, sensor_name) == 0) {
             bool r = list[ix].start_sampling_cb();
             if (!r) {
-                ei_printf("Failed to start sampling\n");
+                ei_printf("Failed to start sampling\r\n");
             }
             return;
         }
     }
 
-    ei_printf("Failed to find sensor '%s' in the sensor list\n", sensor_name);
+    ei_printf("Failed to find sensor '%s' in the sensor list\r\n", sensor_name);
 }
 
 static void at_clear_files_data(char *filename) {
     if (ei_config_get_context()->unlink_file(filename)) {
-        ei_printf("Unlinked '%s'\n", filename);
+        ei_printf("Unlinked '%s'\r\n", filename);
     }
     else {
-        ei_printf("ERR: Failed to unlink '%s'\n", filename);
+        ei_printf("ERR: Failed to unlink '%s'\r\n", filename);
     }
 }
 
 static void at_clear_fs() {
-    ei_printf("Clearing file system...\n");
+    ei_printf("Clearing file system...\r\n");
 
     ei_config_get_context()->list_files(at_clear_files_data);
 }

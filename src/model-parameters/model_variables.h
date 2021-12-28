@@ -19,28 +19,26 @@
 * SOFTWARE.
 */
 
-#ifndef _EI_CLASSIFIER_DSP_BLOCKS_H_
-#define _EI_CLASSIFIER_DSP_BLOCKS_H_
+#ifndef _EI_CLASSIFIER_MODEL_VARIABLES_H_
+#define _EI_CLASSIFIER_MODEL_VARIABLES_H_
 
-#include "model-parameters/model_metadata.h"
-#include "model-parameters/model_variables.h"
-#include "edge-impulse-sdk/classifier/ei_run_dsp.h"
-#include "edge-impulse-sdk/classifier/ei_model_types.h"
+#include <stdint.h>
+#include "model_metadata.h"
 
-const size_t ei_dsp_blocks_size = 1;
-ei_model_dsp_t ei_dsp_blocks[ei_dsp_blocks_size] = {
-    { // DSP block 9
-        1600,
-        &extract_audio_syntiant_features,
-        (void*)&ei_dsp_config_9,
-        ei_dsp_config_9_axes,
-        ei_dsp_config_9_axes_size
-    }
+const char* ei_classifier_inferencing_categories[] = { "go", "stop", "z_openset" };
+
+uint8_t ei_dsp_config_9_axes[] = { 0 };
+const uint32_t ei_dsp_config_9_axes_size = 1;
+ei_dsp_config_audio_syntiant_t ei_dsp_config_9 = {
+    1,
+    1,
+    0.03200f,
+    0.02400f,
+    40,
+    512,
+    0,
+    0,
+    0.96875f
 };
 
-const size_t ei_dsp_blocks_i16_size = 0;
-ei_model_dsp_i16_t ei_dsp_blocks_i16[ei_dsp_blocks_i16_size] = {
-
-};
-
-#endif // _EI_CLASSIFIER_DSP_BLOCKS_H_
+#endif // _EI_CLASSIFIER_MODEL_METADATA_H_

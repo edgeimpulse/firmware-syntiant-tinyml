@@ -139,20 +139,31 @@ IF %ERRORLEVEL% NEQ 0 (
     echo Installing SerialFlash library OK
 )
 
-(arduino-cli lib list NDP 2> nul) | findstr /r "0.0.2"
+(arduino-cli lib list NDP 2> nul) | findstr /r "1.0.0"
 IF %ERRORLEVEL% NEQ 0 (
+    arduino-cli lib uninstall NDP
     echo Installing NDP library...
     mkdir "%library%\NDP"
     xcopy "lib\NDP" "%library%\NDP" /E /V /Y
     echo Installing NDP library OK
 )
 
-(arduino-cli lib list NDP_utils 2> nul) | findstr /r "0.0.1"
+(arduino-cli lib list NDP_utils 2> nul) | findstr /r "1.0.0"
 IF %ERRORLEVEL% NEQ 0 (
+    arduino-cli lib uninstall NDP_utils
     echo Installing NDP_utils library...
     mkdir "%library%\NDP_utils"
     xcopy "lib\NDP_utils" "%library%\NDP_utils" /E /V /Y
     echo Installing NDP_utils library OK
+)
+
+(arduino-cli lib list PMIC_SGM41512 2> nul) | findstr /r "1.0.0"
+IF %ERRORLEVEL% NEQ 0 (
+    arduino-cli lib uninstall PMIC_SGM41512
+    echo Installing PMIC_SGM41512 library...
+    mkdir "%library%\PMIC_SGM41512"
+    xcopy "lib\PMIC_SGM41512" "%library%\PMIC_SGM41512" /E /V /Y
+    echo Installing PMIC_SGM41512 library OK
 )
 
 for /f "delims=" %%i in ('arduino-cli config dump ^| findstr /r "data: "') do (
@@ -176,13 +187,6 @@ IF %ERRORLEVEL% NEQ 0 (
     mkdir "%library%\syntiant_ilib"
     xcopy "lib\syntiant_ilib" "%library%\syntiant_ilib" /E /V /Y
     echo Installing Syntiant ilib library OK
-)
-
-fc "lib\Arduino_BQ24195\src\BQ24195.cpp" "%library%\Arduino_BQ24195\src\BQ24195.cpp" > nul
-IF %ERRORLEVEL% NEQ 0 (
-    echo Installing BQ24195 library...
-    xcopy "lib\Arduino_BQ24195" "%library%\Arduino_BQ24195" /E /V /Y
-    echo Installing BQ24195 library OK
 )
 
 echo Installing of libraries completed ...

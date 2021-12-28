@@ -192,16 +192,9 @@ if [ -z "$HAS_SERIALFLASH_LIB" ]; then
     echo "Installing SerialFlash library OK"
 fi
 
-# Check BQ24195 lib version
-if ! cmp -s "lib/Arduino_BQ24195/src/BQ24195.cpp" "${ARDUINO_LIB_DIR}/Arduino_BQ24195/src/BQ24195.cpp"; then
-    echo "Installing BQ24195 library..."
-    cp -R lib/Arduino_BQ24195 "${ARDUINO_LIB_DIR}"
-    echo "Installing BQ24195 library OK"
-fi
-
-# Check NDP v0.0.2
+# Check NDP v1.0.0
 has_NDP_lib() {
-	$ARDUINO_CLI lib list NDP | grep 0.0.2 || true
+	$ARDUINO_CLI lib list NDP | grep 1.0.0 || true
 }
 HAS_NDP_LIB="$(has_NDP_lib)"
 if [ -z "$HAS_NDP_LIB" ]; then
@@ -210,15 +203,27 @@ if [ -z "$HAS_NDP_LIB" ]; then
     echo "Installing NDP library OK"
 fi
 
-# Check NDP_utils v0.0.1
+# Check NDP_utils v1.0.0
 has_NDP_utils_lib() {
-	$ARDUINO_CLI lib list NDP_utils | grep 0.0.1 || true
+	$ARDUINO_CLI lib list NDP_utils | grep 1.0.0 || true
 }
 HAS_NDP_UTILS_LIB="$(has_NDP_utils_lib)"
 if [ -z "$HAS_NDP_UTILS_LIB" ]; then
     echo "Installing NDP_utils library..."
     cp -R lib/NDP_utils "${ARDUINO_LIB_DIR}"
     echo "Installing NDP_utils library OK"
+fi
+
+
+# Check PMIC v1.0.0
+has_PMIC_lib() {
+	$ARDUINO_CLI lib list PMIC_SGM41512 | grep 1.0.0 || true
+}
+HAS_PMIC_LIB="$(has_PMIC_lib)"
+if [ -z "$HAS_PMIC_LIB" ]; then
+    echo "Installing PMIC library..."
+    cp -R lib/PMIC_SGM41512 "${ARDUINO_LIB_DIR}"
+    echo "Installing PMIC library OK"
 fi
 
 # CLI v0.14 updates the name of this to --build-property

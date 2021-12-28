@@ -51,6 +51,7 @@
 #define EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE       (EI_CLASSIFIER_RAW_SAMPLE_COUNT * EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME)
 #define EI_CLASSIFIER_INPUT_WIDTH                0
 #define EI_CLASSIFIER_INPUT_HEIGHT               0
+#define EI_CLASSIFIER_INPUT_FRAMES               0
 #define EI_CLASSIFIER_INTERVAL_MS                0.0625
 #define EI_CLASSIFIER_LABEL_COUNT                3
 #define EI_CLASSIFIER_HAS_ANOMALY                0
@@ -89,8 +90,6 @@
 #error "Cannot use full TensorFlow Lite with EON"
 #endif
 #endif // EI_CLASSIFIER_INFERENCING_ENGINE == EI_CLASSIFIER_TFLITE && EI_CLASSIFIER_USE_FULL_TFLITE == 1
-
-const char* ei_classifier_inferencing_categories[] = { "go", "stop", "z_openset" };
 
 typedef struct {
     uint16_t implementation_version;
@@ -178,22 +177,6 @@ typedef struct {
     int low_frequency;
     int high_frequency;
     float pre_cof;
-    bool invert_features;
 } ei_dsp_config_audio_syntiant_t;
-
-uint8_t ei_dsp_config_9_axes[] = { 0 };
-const uint32_t ei_dsp_config_9_axes_size = 1;
-ei_dsp_config_audio_syntiant_t ei_dsp_config_9 = {
-    1,
-    1,
-    0.03200f,
-    0.02400f,
-    40,
-    512,
-    0,
-    0,
-    0.96875f,
-    false
-};
 
 #endif // _EI_CLASSIFIER_MODEL_METADATA_H_

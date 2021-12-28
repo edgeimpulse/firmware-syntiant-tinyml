@@ -49,7 +49,7 @@ You can also do both by using:
 
 * Install the following libraries as a Zip library:
     * lib/Adafruit_ASFcore
-    * lib/Arduino_BQ24195
+    * lib/PMIC_SGM41512
     * lib/AudioUSB
     * lib/NDP
     * lib/NDP_utils
