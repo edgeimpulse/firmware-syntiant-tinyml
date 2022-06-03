@@ -1,5 +1,5 @@
 /* Edge Impulse ingestion SDK
- * Copyright (c) 2021 EdgeImpulse Inc.
+ * Copyright (c) 2022 EdgeImpulse Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,17 +23,17 @@
 /* Include ----------------------------------------------------------------- */
 #include "ei_syntiant_fs_commands.h"
 #include "ei_device_syntiant_samd.h"
+#include "ei_sample_storage.h"
 
-
-
+/* Memory settings --------------------------------------------------------- */
 #define SERIAL_FLASH	0
 #define MICRO_SD		1
 #define RAM				2
 
-#define SAMPLE_MEMORY	RAM
+#define SAMPLE_MEMORY	MICRO_SD
 
-#define RAM_BLOCK_SIZE	4096
-#define RAM_N_BLOCKS	2
+#define RAM_BLOCK_SIZE	1024
+#define RAM_N_BLOCKS	10
 #define SIZE_RAM_BUFFER		(RAM_BLOCK_SIZE*RAM_N_BLOCKS)
 // #define SYNTIANT_BSP_SPIFLASH_CS_NUM   eSpiChipSel1
 
@@ -75,6 +75,10 @@ int ei_syntiant_fs_load_config(uint32_t *config, uint32_t config_size)
 	
 	return retVal;
 
+    #elif(SAMPLE_MEMORY == MICRO_SD)
+
+    return retVal;
+
 	#elif(SAMPLE_MEMORY == SERIAL_FLASH)
 
 	if(flash_wait_while_busy() == 0) {
@@ -112,6 +116,9 @@ int ei_syntiant_fs_save_config(const uint32_t *config, uint32_t config_size)
 	
 	return retVal;
 
+	#elif(SAMPLE_MEMORY == MICRO_SD)
+	return retVal;
+
 	#elif(SAMPLE_MEMORY == SERIAL_FLASH)
 
 	retVal = flash_erase_sectors(0, 1);
@@ -136,7 +143,16 @@ int ei_syntiant_fs_save_config(const uint32_t *config, uint32_t config_size)
 int ei_syntiant_fs_erase_sampledata(uint32_t start_block, uint32_t end_address)
 {
 	#if(SAMPLE_MEMORY == RAM)
+    for(int i = 0; i < SIZE_RAM_BUFFER; i++) {
+        ram_memory[i] = 0xFF;
+    }
 	return SYNTIANT_FS_CMD_OK;
+
+    #elif(SAMPLE_MEMORY == MICRO_SD)
+
+    ei_create_bin();
+    return SYNTIANT_FS_CMD_OK;
+
 	#elif(SAMPLE_MEMORY == SERIAL_FLASH)
 	return flash_erase_sectors(MX25R_BLOCK64_SIZE, end_address / MX25R_SECTOR_SIZE);
 
@@ -155,7 +171,7 @@ int ei_syntiant_fs_erase_sampledata(uint32_t start_block, uint32_t end_address)
 int ei_syntiant_fs_write_samples(const void *sample_buffer, uint32_t address_offset, uint32_t n_samples)
 {
 	uint32_t n_word_samples = WORD_ALIGN(n_samples);
-	
+
 	#if(SAMPLE_MEMORY == RAM)
 	if((address_offset + n_word_samples) > SIZE_RAM_BUFFER) {
 		return SYNTIANT_FS_CMD_WRITE_ERROR;
@@ -163,18 +179,39 @@ int ei_syntiant_fs_write_samples(const void *sample_buffer, uint32_t address_off
 	else if(sample_buffer == 0) {
 		return SYNTIANT_FS_CMD_NULL_POINTER;
 	}
-	
 
 	for(int i=0;  i<n_word_samples; i++) {
 		ram_memory[address_offset + i] = *((char *)sample_buffer + i);
 	}
-	return SYNTIANT_FS_CMD_OK;	
+	return SYNTIANT_FS_CMD_OK;
+
+    #elif(SAMPLE_MEMORY == MICRO_SD)
+
+    if(ei_write_data_to_bin((uint8_t *)sample_buffer, address_offset, n_samples)) {
+        return SYNTIANT_FS_CMD_WRITE_ERROR;
+    }
+    else {
+        return SYNTIANT_FS_CMD_OK;
+    }
 	
 	#elif(SAMPLE_MEMORY == SERIAL_FLASH)
 	
 	return flash_write(MX25R_BLOCK64_SIZE + address_offset, (const uint8_t *)sample_buffer, n_word_samples);	
 
 	#endif
+}
+
+int ei_syntiant_fs_end_write(uint32_t address_offset)
+{
+    #if(SAMPLE_MEMORY == MICRO_SD)
+
+    if(ei_write_last_data_to_bin(address_offset)) {
+        return SYNTIANT_FS_CMD_WRITE_ERROR;
+    }
+    else {
+        return SYNTIANT_FS_CMD_OK;
+    }
+    #endif
 }
 
 /**
@@ -200,6 +237,13 @@ int ei_syntiant_fs_read_sample_data(void *sample_buffer, uint32_t address_offset
 		*((char *)sample_buffer + i) = ram_memory[address_offset + i];
 	}
 	return SYNTIANT_FS_CMD_OK;
+
+
+    #elif(SAMPLE_MEMORY == MICRO_SD)
+
+    ei_read_sample_buffer((uint8_t *)sample_buffer, address_offset, n_read_bytes);
+
+    return SYNTIANT_FS_CMD_OK;
 	
 	#elif(SAMPLE_MEMORY == SERIAL_FLASH)
 
@@ -228,6 +272,8 @@ uint32_t ei_syntiant_fs_get_block_size(void)
 {
 	#if(SAMPLE_MEMORY == RAM)
 	return RAM_BLOCK_SIZE;
+    #elif(SAMPLE_MEMORY == MICRO_SD)
+    return SD_BLOCK_SIZE;
 	#elif(SAMPLE_MEMORY == SERIAL_FLASH)
 	return MX25R_SECTOR_SIZE;
 	#endif
@@ -242,6 +288,8 @@ uint32_t ei_syntiant_fs_get_n_available_sample_blocks(void)
 {
 	#if(SAMPLE_MEMORY == RAM)
 	return RAM_N_BLOCKS;
+    #elif(SAMPLE_MEMORY == MICRO_SD)
+    return SD_N_BLOCKS;
 	#elif(SAMPLE_MEMORY == SERIAL_FLASH)
 	return (MX25R_CHIP_SIZE - MX25R_BLOCK64_SIZE) / MX25R_SECTOR_SIZE;
 	#endif

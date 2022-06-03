@@ -27,6 +27,7 @@
 #include "ingestion-sdk-c/ei_config.h"
 #include "repl/at_cmds.h"
 #include "ingestion-sdk-platform/syntiant/ei_syntiant_fs_commands.h"
+#include "ei_sample_storage.h"
 #include "model-parameters/model_metadata.h"
 #include "model-parameters/model_variables.h"
 

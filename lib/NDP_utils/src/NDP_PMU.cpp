@@ -61,50 +61,50 @@ void readFrom(int device, byte address, int num, byte buff[])
 
 void printPmu()
 {
-    Serial.print("SGM41512 Registers - ");
+    Serial2.print("SGM41512 Registers - ");
 
     byte buff[10];
     for (byte i = 0; i < 0xc; i++) { // SGM41512 has 11 registers.
         readFrom(SGM41512, i, 1, buff);
-        Serial.print(i);
-        Serial.print(" = 0x");
-        Serial.print(buff[0], HEX);
-        Serial.print(", ");
+        Serial2.print(i);
+        Serial2.print(" = 0x");
+        Serial2.print(buff[0], HEX);
+        Serial2.print(", ");
     }
-    Serial.println("");
+    Serial2.println("");
 }
 
 // Print LiPo battery voltage. Maximum (3v7) should give 0x3ff
 void printBattery()
 {
-    Serial.print("Battery = ");
-    Serial.print(100 * analogRead(ADC_BATTERY) / 0x3ff);
-    Serial.println("%");
+    Serial2.print("Battery = ");
+    Serial2.print(100 * analogRead(ADC_BATTERY) / 0x3ff);
+    Serial2.println("%");
 }
 
 // Set PMU into Boost mode. This generates 5v on the PMU PMD pin
 void pmuBoost()
 {
-    //Serial.println("Reseting PMU Registers");
+    //Serial2.println("Reseting PMU Registers");
 
     // reset PMU registers
     writeTo(SGM41512, RESET_AND_VERSION_REG, 0xAC);
 
-    Serial.println("Enabling boost mode");
+    Serial2.println("Enabling boost mode");
 
     // Set PMU_OTG pin high to enable boost mode
     digitalWrite(PMU_OTG, HIGH);
     digitalWrite(ENABLE_5V, HIGH);
 
     if (!PMIC.begin()) {
-        Serial.println("Failed to initialize PMIC!");
+        Serial2.println("Failed to initialize PMIC!");
         return;
     }
 
     // Enable boost mode, this mode allow to use the board as host and
     // connect guest device like keyboard
     if (!PMIC.enableBoostMode())  {
-        Serial.println("Error enabling boost mode");
+        Serial2.println("Error enabling boost mode");
     }
 
     // disable watchdog
@@ -117,7 +117,7 @@ void pmuCharge()
     // reset PMU registers
     writeTo(SGM41512, RESET_AND_VERSION_REG, 0xAC);
 
-    Serial.println("Enabling battery charging mode");
+    Serial2.println("Enabling battery charging mode");
 
     // Set OTB low (no boost mode). Disable 5v out
     //digitalWrite(PMU_OTG, HIGH);
@@ -130,7 +130,7 @@ void pmuCharge()
     writeTo(SGM41512, CHARGE_CURRENT_CTL_REG, 0x83);
     // Enable the Charger
     if (!PMIC.enableCharge()) {
-        Serial.println("Error enabling battery charging mode");
+        Serial2.println("Error enabling battery charging mode");
     }
     // disable watchdog
     PMIC.disableWatchdog();

@@ -38,6 +38,7 @@ private:
 public:
 	EiDeviceInfo(void){};
 	~EiDeviceInfo(void){};
+    static EiDeviceInfo *get_device(void);
 
 	/**
 	 * @brief      Gets the device ID string

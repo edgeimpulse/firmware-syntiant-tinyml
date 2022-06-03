@@ -3,6 +3,8 @@
 PROJECT=firmware-syntiant-tinyml
 BOARD=arduino:samd:mkrzero
 COMMAND=$1
+# use --with-imu flag as 2nd argument to build firmware for IMU
+SENSOR=$2
 
 if [ -z "$ARDUINO_CLI" ]; then
 	ARDUINO_CLI=$(which arduino-cli || true)
@@ -203,9 +205,9 @@ if [ -z "$HAS_NDP_LIB" ]; then
     echo "Installing NDP library OK"
 fi
 
-# Check NDP_utils v1.0.0
+# Check NDP_utils v1.0.2
 has_NDP_utils_lib() {
-	$ARDUINO_CLI lib list NDP_utils | grep 1.0.0 || true
+	$ARDUINO_CLI lib list NDP_utils | grep 1.0.2 || true
 }
 HAS_NDP_UTILS_LIB="$(has_NDP_utils_lib)"
 if [ -z "$HAS_NDP_UTILS_LIB" ]; then
@@ -233,16 +235,28 @@ else
     BUILD_PROPERTIES_FLAG=--build-properties
 fi
 
-INCLUDE="-I./src/"
+INCLUDE="-DEI_SENSOR_AQ_STREAM=FILE"
+INCLUDE+=" -I./src/"
 INCLUDE+=" -I/ingestion-sdk-platform/repl/"
+INCLUDE+=" -I./src/ingestion-sdk-platform/syntiant/"
+INCLUDE+=" -I./src/sensors/"
+INCLUDE+=" -I./src/ingestion-sdk-c/"
+INCLUDE+=" -I./src/QCBOR/inc/"
+INCLUDE+=" -I./src/sensor_aq_mbedtls/"
 INCLUDE+=" -DUSE_ARDUINO_MKR_PIN_LAYOUT -D__SAMD21G18A__ "
 INCLUDE+="-DUSB_VID=0x2341 -DUSB_PID=0x804f -DUSBCON -DUSB_MANUFACTURER=\"Syntiant\" -DUSB_PRODUCT=\"TinyML\""
 
+if [ "$SENSOR" = "--with-imu" ];
+then
+    CPP_FLAGS="-DWITH_IMU"
+else
+    CPP_FLAGS=""
+fi
 
 if [ "$COMMAND" = "--build" ];
 then
 	echo "Building $PROJECT"
-	$ARDUINO_CLI compile --fqbn $BOARD $BUILD_PROPERTIES_FLAG build.extra_flags="$INCLUDE" --output-dir . &
+	$ARDUINO_CLI compile --fqbn $BOARD $BUILD_PROPERTIES_FLAG build.extra_flags="$INCLUDE" $BUILD_PROPERTIES_FLAG "compiler.cpp.extra_flags=${CPP_FLAGS}" --output-dir . &
 	pid=$! # Process Id of the previous running command
 	while kill -0 $pid 2>/dev/null
 	do
@@ -262,7 +276,7 @@ then
 	$ARDUINO_CLI upload -p $($ARDUINO_CLI board list | grep Arduino | cut -d ' ' -f1) --fqbn $BOARD --input-dir .
 elif [ "$COMMAND" = "--all" ];
 then
-	$ARDUINO_CLI compile --clean --fqbn $BOARD $BUILD_PROPERTIES_FLAG build.extra_flags="$INCLUDE" --output-dir .
+	$ARDUINO_CLI compile --clean --fqbn $BOARD $BUILD_PROPERTIES_FLAG build.extra_flags="$INCLUDE" $BUILD_PROPERTIES_FLAG "compiler.cpp.extra_flags=${CPP_FLAGS}" --output-dir .
 	status=$?
 	[ $status -eq 0 ] && $ARDUINO_CLI upload -p $($ARDUINO_CLI board list | grep Arduino | cut -d ' ' -f1) --fqbn $BOARD --input-dir .
 else

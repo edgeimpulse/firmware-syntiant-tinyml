@@ -44,8 +44,9 @@ int loadModel(String model)
     // Initialize SD insertion sense pin
     pinMode(SD_CARD_SENSE, INPUT_PULLUP);
 
-    pinMode(ENABLE_PDM, OUTPUT);
-    digitalWrite(ENABLE_PDM, LOW); // Enable PDM clock
+    // Can cause issue with sensor if PDM enabled. Will be enabled for audio in syntiant.cpp
+    //pinMode(ENABLE_PDM, OUTPUT);
+    //digitalWrite(ENABLE_PDM, LOW); // Enable PDM clock
 
     // Bluebank board uses SST25VF016B. SD_CARD_SENSE pin is HIGH with card inserted
     // Tesolve board uses MX25R6435FSN. SD_CARD_SENSE pin is LOW with card inserted

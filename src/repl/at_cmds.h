@@ -26,7 +26,7 @@
 #include "at_cmd_interface.h"
 #include "at_base64.h"
 #include "../ingestion-sdk-c/ei_config.h"
-
+#include "ei_syntiant_fs_commands.h"
 
 #define EDGE_IMPULSE_AT_COMMAND_VERSION        "1.6.0"
 
@@ -280,7 +280,7 @@ static void at_read_file(char *filename) {
     }
 }
 
-static void at_read_buffer(char *start_s, char *length_s) {
+static void at_read_buffer(char *start_s, char *length_s, char *baudrate_s) {
     size_t start = (size_t)atoi(start_s);
     size_t length = (size_t)atoi(length_s);
 
@@ -301,7 +301,7 @@ static void at_read_raw(char *start_s, char *length_s) {
     int count = 0;
 
     for(; start < length; start += 32) {
-        // ei_eta_fs_read_sample_data(buffer, start, 32);
+        ei_syntiant_fs_read_sample_data(buffer, start, 32);
 
         int n_display_bytes = (length - start) < 32 ? (length - start) : 32;
         for(int i=0; i<n_display_bytes; i++) {
@@ -457,7 +457,7 @@ void ei_at_register_generic_cmds() {
     ei_at_cmd_register("MGMTSETTINGS=", "Sets current management settings (URL)", &at_set_mgmt_settings);
     ei_at_cmd_register("LISTFILES", "Lists all files on the device", &at_list_files);
     ei_at_cmd_register("READFILE=", "Read a specific file (as base64)", &at_read_file);
-    ei_at_cmd_register("READBUFFER=", "Read from the temporary buffer (as base64) (START,LENGTH)", &at_read_buffer);
+    ei_at_cmd_register("READBUFFER=", "Read from the temporary buffer (as base64) (START,LENGTH,USEMAXRATE?(y/n))", &at_read_buffer);
     ei_at_cmd_register("UNLINKFILE=", "Unlink a specific file", &at_unlink_file);
 //    ei_at_cmd_register("UPLOADFILE=", "Upload a specific file", &at_upload_file);
     ei_at_cmd_register("SAMPLESTART=", "Start sampling", &at_sample_start);

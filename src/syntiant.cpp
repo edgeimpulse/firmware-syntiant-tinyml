@@ -30,10 +30,16 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+// Uncomment next line to compile IMU firmware using Arduino IDE
+// #define WITH_IMU
+
 #include <inttypes.h>
 #include <stddef.h>
 
+#ifndef WITH_IMU
 #define WITH_AUDIO
+#endif
+
 #ifdef WITH_AUDIO
 #include "AudioUSB.h"
 #endif
@@ -58,10 +64,18 @@
 #include "ingestion-sdk-platform/syntiant/ei_device_syntiant_samd.h"
 #include "repl/repl.h"
 
+/* Constant defines -------------------------------------------------------- */
+#define CONVERT_G_TO_MS2    9.80665f
+
+/* Extern declared --------------------------------------------------------- */
 extern void ei_setup(void);
 extern void ei_classification_output(int matched_feature);
 
+#if defined(WITH_IMU)
+String model = "ei_model_sensor.bin";
+#else
 String model = "ei_model.bin";
+#endif
 
 Adafruit_ZeroTimer zt3 = Adafruit_ZeroTimer(3);
 
@@ -165,10 +179,23 @@ byte SPI_CS = TINYML_CS;
 File myFile;
 SerialFlashFile mySerialFlashFile;
 
+#ifdef WITH_AUDIO
 int16_t audioBuf[32]; // Audio Buffer
+#endif
 uint32_t tankAddress = 0;
 uint32_t tankSize = 0;
+
 uint32_t currentPointer = 0;
+static uint32_t prevPointer = 0;
+
+#ifdef WITH_IMU
+const int dataLengthToBeSaved = 72;
+static int16_t dataBuf[dataLengthToBeSaved];
+#endif
+static int16_t imu[36];
+static bool imu_active = false;
+
+static uint32_t startingFWAddress;
 
 byte LastUserSwitch = 1;
 uint32_t SAVE_REG_SYSCTRL_DFLLCTRL = 0xA46;
@@ -242,8 +269,22 @@ void ndpInt()
     {
         timer4.enableInterrupt(true);
     }
+
     ints++;
     // Serial.print(ints);
+}
+
+void syntiant_get_imu(float *dest_imu)
+{
+    while(imu_active){};
+
+    imu_active = true;
+
+    for (int i = 0; i < 36; i++) {
+        dest_imu[i] = (float)(imu[i] * 2 / 32768.f) * CONVERT_G_TO_MS2;
+    }
+
+    imu_active = false;
 }
 
 // Timer 4 interrupt. Handles ALL touches of NDP. Also services USB Audio
@@ -252,14 +293,6 @@ void isrTimer4(struct tc_module *const module_inst)
     digitalWrite(0, LOW);
     int s;
     unsigned int len;
-
-    // byte temp = digitalRead(USER_SWITCH);
-    // if (temp != LastUserSwitch)
-    // {
-    //     Serial2.print("User Switch = ");
-    //     Serial2.println(temp ? "RELEASED" : "PRESSED");
-    //     LastUserSwitch = temp;
-    // }
 
     SCB->SCR &= !SCB_SCR_SLEEPDEEP_Msk; // Don't Allow Deep Sleep
     if ((ledTimerCount < 0xffff) && (ledTimerCount > 0))
@@ -273,8 +306,8 @@ void isrTimer4(struct tc_module *const module_inst)
 
 
 #ifdef WITH_AUDIO
-    if (runningFromFlash)
-    {
+    if (runningFromFlash) {
+
         uint32_t tankRead;
         int i;
 
@@ -289,6 +322,37 @@ void isrTimer4(struct tc_module *const module_inst)
         currentPointer %= tankSize;
     }
     AudioUSB.write(audioBuf, 32); // write samples to AudioUSB
+#else
+
+    if(runningFromFlash) {
+        currentPointer = indirectRead(startingFWAddress);
+
+        int32_t diffPointer = ((int32_t)currentPointer - prevPointer);
+
+        if(diffPointer < 0) {
+            diffPointer = (64000 - prevPointer) + currentPointer;
+        }
+        if(diffPointer >= dataLengthToBeSaved) {
+            len = sizeof(dataBuf);
+            int ret = NDP.extractData((uint8_t *)dataBuf, &len);
+
+            if(ret != SYNTIANT_NDP_ERROR_NONE) {
+                ei_printf("Extracting data failed with error : %d\r\n", ret);
+            }
+            else {
+                if(imu_active == false) {
+                    imu_active = true;
+                    for(int i = 0; i < (dataLengthToBeSaved / 2); i++) {
+                        imu[i] = dataBuf[i];
+                    }
+
+                    imu_active = false;
+                }
+            }
+
+            prevPointer = currentPointer;
+        }
+    }
 #endif
 
     if (doInt)
@@ -468,41 +532,41 @@ void syntiant_setup(void)
     switch (loadModel(model))
     {
     case BIN_LOAD_OK:
-        Serial2.println("BIN file loaded correctly from SD Card");
+        ei_printf("BIN file loaded correctly from SD Card");
         runningFromFlash = 1;
         digitalWrite(LED_BLUE, HIGH); // Light BLUE LED as uilib load successful
         loadedFromSD = 1;
         loadedFromSerialFlash = 0;
         break;
     case NO_SD:
-        Serial2.println("No SD Card inserted, please insert card");
-        Serial2.println("Running in Bridge Mode");
+        ei_printf("No SD Card inserted, please insert card");
+        ei_printf("Running in Bridge Mode");
         break;
     case SD_NOT_INITIALIZED:
-        Serial2.println("SD Card initialization failed!");
-        Serial2.println("Running in Bridge Mode");
+        ei_printf("SD Card initialization failed!");
+        ei_printf("Running in Bridge Mode");
         break;
     case BIN_NOT_OPENED:
-        Serial2.println(model + " NOT opened");
-        Serial2.println("Running in Bridge Mode");
+        // ei_printf(model + " NOT opened. Make sure you're using the correct BIN file name.");
+        ei_printf("Running in Bridge Mode");
         break;
     case ERROR_LOADING_FLASH:
-        Serial2.println("Error loading bin from Flash!");
-        Serial2.println("Running in Bridge Mode");
+        ei_printf("Error loading bin from Flash!");
+        ei_printf("Running in Bridge Mode");
         break;
     case ERROR_LOADING_SD:
-        Serial2.println("Error loading bin from SD!");
-        Serial2.println("Running in Bridge Mode");
+        ei_printf("Error loading bin from SD!");
+        ei_printf("Running in Bridge Mode");
         break;
     case LOADED_FROM_SERIAL_FLASH:
-        Serial2.println("BIN File Loaded correctly from Serial Flash");
+        ei_printf("BIN File Loaded correctly from Serial Flash");
         runningFromFlash = 1;
         digitalWrite(LED_GREEN, HIGH); // Light GREEN LED as uilib load successful
         loadedFromSerialFlash = 1;
         loadedFromSD = 0;
         break;
     default:
-        Serial2.println("Running in Bridge Mode");
+        ei_printf("Running in Bridge Mode");
         break;
     }
 
@@ -541,18 +605,34 @@ void syntiant_setup(void)
     tankSize = indirectRead(DSP_CONFIG_TANK) >> 4;
     tankAddress = indirectRead(DSP_CONFIG_TANKADDR);
 
+#if defined(WITH_AUDIO)
     // Load Audio Buffer with test pattern
     for (i = 0; i < sizeof(audioBuf) / 2; i++) {
         audioBuf[i] = 4000 * (i - (sizeof(audioBuf) / 4));
     }
+#endif
 
 
 #if defined(WITH_AUDIO)
     AudioUSB.getShortName(namep); // needed for platformio to load AudioUSB
 #endif
-    Serial.println("setup done");
+
+
+    //ENABLE_PDM = 25 is  declared in NDP_GPIO.h is the pin for controlling buffer SGM7SZ125. This buffer
+    // will be activated (low) for voice command spotting and deactvated (high) for sensor appliactions
+
+    pinMode(ENABLE_PDM, OUTPUT);
+#if defined(WITH_IMU)
+    digitalWrite(ENABLE_PDM, HIGH); // Disable PDM clock
+    Serial.println("setup for IMU done");
+#else
+    digitalWrite(ENABLE_PDM, LOW); // Enable PDM clock
+    Serial.println("setup for audio done");
+#endif
 
     timer4.enable(true); // enable 1mS timer interrupt
+
+    startingFWAddress = indirectRead(0x1fffc0c0);
 
     ei_setup();
 }

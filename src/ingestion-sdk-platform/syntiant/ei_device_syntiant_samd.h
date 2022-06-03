@@ -25,10 +25,11 @@
 
 /* Include ----------------------------------------------------------------- */
 #include "ei_device_info.h"
+#include "firmware-sdk/ei_device_memory.h"
 
 
 /** Number of sensors used */
-#define EI_DEVICE_N_SENSORS		1
+#define EI_DEVICE_N_SENSORS		2
 
 typedef enum
 {

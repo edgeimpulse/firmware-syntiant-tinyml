@@ -1,3 +1,24 @@
+/* Edge Impulse ingestion SDK
+ * Copyright (c) 2022 EdgeImpulse Inc.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 #ifndef EI_SYNTIANT_FS_COMMANDS_H
 #define EI_SYNTIANT_FS_COMMANDS_H
 
@@ -56,6 +77,7 @@ int ei_syntiant_fs_save_config(const uint32_t *config, uint32_t config_size);
 
 int ei_syntiant_fs_erase_sampledata(uint32_t start_block, uint32_t end_address);
 int ei_syntiant_fs_write_samples(const void *sample_buffer, uint32_t address_offset, uint32_t n_samples);
+int ei_syntiant_fs_end_write(uint32_t address_offset);
 int ei_syntiant_fs_read_sample_data(void *sample_buffer, uint32_t address_offset, uint32_t n_read_bytes);
 uint32_t ei_syntiant_fs_get_block_size(void);
 uint32_t ei_syntiant_fs_get_n_available_sample_blocks(void);

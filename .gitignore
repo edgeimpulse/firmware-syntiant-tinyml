@@ -3,3 +3,5 @@
 *.elf
 *.map
 *.hex
+
+.DS_Store

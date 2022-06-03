@@ -30,4 +30,6 @@
 void syntiant_setup(void);
 void syntiant_loop(void);
 
+void syntiant_get_imu(float *dest_imu);
+
 #endif

@@ -24,6 +24,7 @@
 #include "ei_device_syntiant_samd.h"
 #include "ei_syntiant_fs_commands.h"
 #include "../../repl/repl.h"
+#include "ei_inertialsensor.h"
 
 #include "Arduino.h"
 #include "NDP_Serial.h"
@@ -45,7 +46,8 @@
 /** Sensors */
 typedef enum
 {    
-    MICROPHONE = 0
+    MICROPHONE = 0,
+    INTERTIAL = 1
 
 }used_sensors_t;
 
@@ -71,6 +73,14 @@ static void timer_callback(void *arg);
 static bool read_sample_buffer(size_t begin, size_t length, void(*data_fn)(uint8_t*, size_t));
 
 /* Public functions -------------------------------------------------------- */
+
+EiDeviceInfo* EiDeviceInfo::get_device(void)
+{
+    // static EiFlashMemory memory(sizeof(EiConfig));
+    // static EiDeviceSyntiant dev();
+
+    return &EiDevice;
+}
 
 EiDeviceSyntiant::EiDeviceSyntiant(void)
 {
@@ -179,6 +189,11 @@ bool EiDeviceSyntiant::get_sensor_list(const ei_device_sensor_t **sensor_list, s
     sensors[MICROPHONE].start_sampling_cb = &microphone_callback;
     sensors[MICROPHONE].max_sample_length_s = available_bytes / (16000 * 2);
     sensors[MICROPHONE].frequencies[0] = 16000.0f;
+
+    sensors[INTERTIAL].name = "Inertial";
+    sensors[INTERTIAL].start_sampling_cb = &ei_inertial_setup_data_sampling;
+    sensors[INTERTIAL].max_sample_length_s = available_bytes / (100 * SIZEOF_N_AXIS_SAMPLED);
+    sensors[INTERTIAL].frequencies[0] = 100.f;
 
     *sensor_list      = sensors;
     *sensor_list_size = EI_DEVICE_N_SENSORS;
@@ -392,8 +407,13 @@ void ei_printf_float(float f)
  * @param[in]  length  The length
  */
 void ei_write_string(char *data, int length)
-{
-    Serial.write(data, length);
+{   
+//    Serial.write(data, length);
+
+    for(int i = 0; i < length; i++) {
+        Serial.write(&data[i], 1);
+    }
+
 }
 
 /**

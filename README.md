@@ -8,11 +8,18 @@ This project uses the `arduino-cli` compiler to build & flash new firmware. Wind
 The script will verify if all needed libraries and the samd core is installed and install them if needed. If you prefer to do this 
 step manually, follow the step in the next chapter.
 
-For building the project use:
+For building the project:
 
+* For audio support, use:
 ```
 ./arduino-build.sh --build
 ```
+
+* For IMU sensor support, use:
+```
+./arduino-build.sh --build --with-imu
+```
+
 
 For flashing use:
 
@@ -20,9 +27,10 @@ For flashing use:
 ./arduino-build.sh --flash
 ```
 
+
 You can also do both by using:
 ```
-./arduino-build.sh --all
+./arduino-build.sh --all [--with-imu]
 ```
 
 
@@ -30,8 +38,18 @@ You can also do both by using:
 
 * Run `update_libraries_windows.bat` script to install Arduino libraries.
 
-* Open the `firmware-syntiant-tinyml.ino` with the Arduino IDE. Select MKRZero as board target and compile/upload.
+* For audio support:
 
+    * Open the `firmware-syntiant-tinyml.ino` with the Arduino IDE.
+    * Select MKRZero as board target and compile/upload.
+
+* For IMU sensor support:
+    * Open the `src/syntiant.cpp` file and uncomment the following line:
+    ```
+    //#define WITH_IMU
+    ```
+    * Open the `firmware-syntiant-tinyml.ino` with the Arduino IDE.
+    * Select MKRZero as board target and compile/upload.
 
 
 ## Setup Manually

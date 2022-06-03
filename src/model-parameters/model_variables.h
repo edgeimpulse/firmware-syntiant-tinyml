@@ -24,6 +24,7 @@
 
 #include <stdint.h>
 #include "model_metadata.h"
+#include "edge-impulse-sdk/classifier/ei_model_types.h"
 
 const char* ei_classifier_inferencing_categories[] = { "go", "stop", "z_openset" };
 
@@ -39,6 +40,14 @@ ei_dsp_config_audio_syntiant_t ei_dsp_config_9 = {
     0,
     0,
     0.96875f
+};
+
+const ei_model_performance_calibration_t ei_calibration = {
+    1, /* integer version number */
+    926, /* average duration window ms */
+    0.9209751525297545, /* detection threshold */
+    753,  /* suppression ms */
+    0x1, /* suppression flags */
 };
 
 #endif // _EI_CLASSIFIER_MODEL_METADATA_H_

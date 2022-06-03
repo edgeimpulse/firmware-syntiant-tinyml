@@ -148,7 +148,7 @@ IF %ERRORLEVEL% NEQ 0 (
     echo Installing NDP library OK
 )
 
-(arduino-cli lib list NDP_utils 2> nul) | findstr /r "1.0.0"
+(arduino-cli lib list NDP_utils 2> nul) | findstr /r "1.0.1"
 IF %ERRORLEVEL% NEQ 0 (
     arduino-cli lib uninstall NDP_utils
     echo Installing NDP_utils library...
