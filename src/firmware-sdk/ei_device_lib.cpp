@@ -20,8 +20,8 @@
  * SOFTWARE.
  */
 
-#include "firmware-sdk/ei_device_lib.h"
-#include "firmware-sdk/ei_device_interface.h"
+#include "ei_device_lib.h"
+#include "ei_device_interface.h"
 
 /**
  * @brief      Call this function periocally during inference to 

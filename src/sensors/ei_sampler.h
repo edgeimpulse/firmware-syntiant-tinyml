@@ -23,7 +23,7 @@
 #ifndef _EI_SAMPLER_H
 #define _EI_SAMPLER_H
 
-#include "firmware-sdk/ei_config_types.h"
+#include "../firmware-sdk/ei_config_types.h"
 
 /* Function prototypes ----------------------------------------------------- */
 bool ei_sampler_start_sampling(void *v_ptr_payload, starter_callback ei_sample_start, uint32_t sample_size);

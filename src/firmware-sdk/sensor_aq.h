@@ -25,7 +25,7 @@
 
 
 /* Include ----------------------------------------------------------------- */
-#include "qcbor.h"
+#include "../QCBOR/inc/qcbor.h"
 #include <stdio.h>
 
 // detect POSIX, and use FILE* in that case

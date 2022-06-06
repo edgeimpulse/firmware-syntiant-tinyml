@@ -24,9 +24,9 @@
 #include <stdint.h>
 
 #include "ei_inertialsensor.h"
-#include "ei_device_syntiant_samd.h"
-#include "firmware-sdk/sensor_aq.h"
-#include "edge-impulse-sdk/porting/ei_classifier_porting.h"
+#include "../ingestion-sdk-platform/syntiant/ei_device_syntiant_samd.h"
+#include "../firmware-sdk/sensor_aq.h"
+#include "../edge-impulse-sdk/porting/ei_classifier_porting.h"
 
 /* Extern declared --------------------------------------------------------- */
 extern ei_config_t *ei_config_get_config();

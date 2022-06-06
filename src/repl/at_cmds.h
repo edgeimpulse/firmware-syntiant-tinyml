@@ -26,7 +26,7 @@
 #include "at_cmd_interface.h"
 #include "at_base64.h"
 #include "../ingestion-sdk-c/ei_config.h"
-#include "ei_syntiant_fs_commands.h"
+#include "../ingestion-sdk-platform/syntiant/ei_syntiant_fs_commands.h"
 
 #define EDGE_IMPULSE_AT_COMMAND_VERSION        "1.6.0"
 

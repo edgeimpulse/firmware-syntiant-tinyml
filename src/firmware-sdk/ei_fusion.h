@@ -25,7 +25,7 @@
 
 /* Include ----------------------------------------------------------------- */
 #include "ei_config_types.h"
-#include "ei_fusion_sensors_config.h"
+#include "../sensors/ei_fusion_sensors_config.h"
 #include "sensor_aq.h"
 
 #define EI_MAX_FREQUENCIES 5

@@ -1,6 +1,6 @@
 #include "ei_at_server.h"
 #include "ei_at_command_set.h"
-#include "edge-impulse-sdk/porting/ei_classifier_porting.h"
+#include "../../edge-impulse-sdk/porting/ei_classifier_porting.h"
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>

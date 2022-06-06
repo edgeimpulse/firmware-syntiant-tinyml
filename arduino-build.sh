@@ -236,13 +236,13 @@ else
 fi
 
 INCLUDE="-DEI_SENSOR_AQ_STREAM=FILE"
-INCLUDE+=" -I./src/"
-INCLUDE+=" -I/ingestion-sdk-platform/repl/"
-INCLUDE+=" -I./src/ingestion-sdk-platform/syntiant/"
-INCLUDE+=" -I./src/sensors/"
-INCLUDE+=" -I./src/ingestion-sdk-c/"
-INCLUDE+=" -I./src/QCBOR/inc/"
-INCLUDE+=" -I./src/sensor_aq_mbedtls/"
+# INCLUDE+=" -I./src/"
+# INCLUDE+=" -I/ingestion-sdk-platform/repl/"
+# INCLUDE+=" -I./src/ingestion-sdk-platform/syntiant/"
+# INCLUDE+=" -I./src/sensors/"
+# INCLUDE+=" -I./src/ingestion-sdk-c/"
+# INCLUDE+=" -I./src/QCBOR/inc/"
+# INCLUDE+=" -I./src/sensor_aq_mbedtls/"
 INCLUDE+=" -DUSE_ARDUINO_MKR_PIN_LAYOUT -D__SAMD21G18A__ "
 INCLUDE+="-DUSB_VID=0x2341 -DUSB_PID=0x804f -DUSBCON -DUSB_MANUFACTURER=\"Syntiant\" -DUSB_PRODUCT=\"TinyML\""
 

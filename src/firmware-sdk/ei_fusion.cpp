@@ -28,8 +28,8 @@
 
 #include "ei_fusion.h"
 #include "ei_device_info_lib.h"
-#include "ei_sampler.h"
-#include "edge-impulse-sdk/porting/ei_classifier_porting.h"
+#include "../sensors/ei_sampler.h"
+#include "../edge-impulse-sdk/porting/ei_classifier_porting.h"
 
 /* Max fusions should fit in fusion sensor array */
 #if NUM_MAX_FUSIONS > NUM_FUSION_SENSORS

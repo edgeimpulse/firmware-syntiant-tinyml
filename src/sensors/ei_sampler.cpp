@@ -25,13 +25,13 @@
 #include <cstdlib>
 
 #include "ei_sampler.h"
-#include "firmware-sdk/ei_device_info_lib.h"
-#include "firmware-sdk/ei_device_memory.h"
-#include "firmware-sdk/ei_config_types.h"
-#include "sensor_aq_mbedtls/sensor_aq_mbedtls_hs256.h"
-#include "edge-impulse-sdk/porting/ei_classifier_porting.h"
-#include "firmware-sdk/sensor_aq.h"
-#include "ei_syntiant_fs_commands.h"
+#include "../firmware-sdk/ei_device_info_lib.h"
+#include "../firmware-sdk/ei_device_memory.h"
+#include "../firmware-sdk/ei_config_types.h"
+#include "../sensor_aq_mbedtls/sensor_aq_mbedtls_hs256.h"
+#include "../edge-impulse-sdk/porting/ei_classifier_porting.h"
+#include "../firmware-sdk/sensor_aq.h"
+#include "../ingestion-sdk-platform/syntiant/ei_syntiant_fs_commands.h"
 
 extern ei_config_t *ei_config_get_config();
 
