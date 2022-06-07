@@ -37,6 +37,7 @@ You can also do both by using:
 ### Usage - Windows
 
 * Run `update_libraries_windows.bat` script to install Arduino libraries.
+> **Note:** If you are using the Arduino IDE downloaded from the Window Store you need to download the Arduino SAMD BOARDS (32-bits ARM Cortex-M0+) version 1.8.9 manually from the Boards Manager.
 
 * For audio support:
 
