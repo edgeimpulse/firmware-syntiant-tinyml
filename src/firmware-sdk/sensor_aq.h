@@ -28,8 +28,6 @@
 #include "qcbor.h"
 #include <stdio.h>
 
-#define EI_SENSOR_AQ_STREAM FILE
-
 // detect POSIX, and use FILE* in that case
 #if !defined(EI_SENSOR_AQ_STREAM) && (defined (__unix__) || (defined (__APPLE__) && defined (__MACH__)))
 #include <time.h>

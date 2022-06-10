@@ -37,21 +37,31 @@ You can also do both by using:
 ### Usage - Windows
 
 * Run `update_libraries_windows.bat` script to install Arduino libraries.
-> **Note:** If you are using the Arduino IDE downloaded from the Window Store you need to download the Arduino SAMD BOARDS (32-bits ARM Cortex-M0+) version 1.8.9 manually from the Boards Manager.
 
-* For audio support:
+For building the project:
 
-    * Open the `firmware-syntiant-tinyml.ino` with the Arduino IDE.
-    * Select MKRZero as board target and compile/upload.
+* For audio support, use:
+```
+./arduino-win-build.bat --build
+```
 
-* For IMU sensor support:
-    * Open the `src/syntiant.cpp` file and uncomment the following line:
-    ```
-    //#define WITH_IMU
-    ```
-    * Open the `firmware-syntiant-tinyml.ino` with the Arduino IDE.
-    * Select MKRZero as board target and compile/upload.
+* For IMU sensor support, use:
+```
+./arduino-win-build.bat --build --with-imu
+```
 
+
+For flashing use, put the board in boot mode (double click on the reset button when connecting the board to USB, while the orange LED is blinking. In boot mode you should see the red LED fading on and off):
+
+```
+./arduino-win-build.bat --flash
+```
+
+
+You can also do both by using:
+```
+./arduino-win-build.bat --all [--with-imu]
+```
 
 ## Setup Manually
 
