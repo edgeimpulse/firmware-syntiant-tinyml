@@ -23,7 +23,7 @@
 /* Include ----------------------------------------------------------------- */
 #include "ei_syntiant_fs_commands.h"
 #include "ei_device_syntiant_samd.h"
-#include "../../ei_sample_storage.h"
+#include "ei_sample_storage.h"
 
 /* Memory settings --------------------------------------------------------- */
 #define SERIAL_FLASH	0

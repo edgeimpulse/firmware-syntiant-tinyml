@@ -24,7 +24,7 @@
 #include "ei_device_syntiant_samd.h"
 #include "ei_syntiant_fs_commands.h"
 #include "../../repl/repl.h"
-#include "../../sensors/ei_inertialsensor.h"
+#include "ei_inertialsensor.h"
 
 #include "Arduino.h"
 #include "NDP_Serial.h"

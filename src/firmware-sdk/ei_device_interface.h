@@ -25,7 +25,7 @@
 
 
 // also grab everything for classifying
-#include "../edge-impulse-sdk/porting/ei_classifier_porting.h"
+#include "edge-impulse-sdk/porting/ei_classifier_porting.h"
 
 /* Function prototypes ----------------------------------------------------- */
 //TODO: remove as it is device specific and wil be superseded by AT Server

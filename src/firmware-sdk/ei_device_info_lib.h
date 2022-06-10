@@ -3,7 +3,7 @@
 
 /* Include ----------------------------------------------------------------- */
 #include "at_base64_lib.h"
-#include "../edge-impulse-sdk/porting/ei_classifier_porting.h"
+#include "edge-impulse-sdk/porting/ei_classifier_porting.h"
 #include "ei_config_types.h"
 #include "ei_device_memory.h"
 #include <cstdint>

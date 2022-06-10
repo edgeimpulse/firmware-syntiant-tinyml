@@ -24,7 +24,7 @@
 
 #include <stdint.h>
 #include "model_metadata.h"
-#include "../edge-impulse-sdk/classifier/ei_model_types.h"
+#include "edge-impulse-sdk/classifier/ei_model_types.h"
 
 const char* ei_classifier_inferencing_categories[] = { "go", "stop", "z_openset" };
 

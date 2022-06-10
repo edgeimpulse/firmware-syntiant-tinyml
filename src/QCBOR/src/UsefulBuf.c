@@ -53,7 +53,7 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  =====================================================================================*/
 
-#include "../inc/UsefulBuf.h"
+#include "UsefulBuf.h"
 
 #define USEFUL_OUT_BUF_MAGIC  (0x0B0F) // used to catch use of uninitialized or corrupted UOBs
 

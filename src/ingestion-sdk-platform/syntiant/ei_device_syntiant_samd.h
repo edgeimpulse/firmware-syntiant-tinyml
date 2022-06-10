@@ -25,7 +25,7 @@
 
 /* Include ----------------------------------------------------------------- */
 #include "ei_device_info.h"
-#include "../../firmware-sdk/ei_device_memory.h"
+#include "firmware-sdk/ei_device_memory.h"
 
 
 /** Number of sensors used */

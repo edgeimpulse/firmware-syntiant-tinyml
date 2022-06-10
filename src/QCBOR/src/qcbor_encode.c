@@ -60,7 +60,7 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  =====================================================================================*/
 
-#include "../inc/qcbor.h"
+#include "qcbor.h"
 #include "ieee754.h"
 
 

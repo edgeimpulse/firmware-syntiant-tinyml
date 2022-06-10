@@ -25,7 +25,7 @@
 
 
 /* Include ----------------------------------------------------------------- */
-#include "../QCBOR/inc/qcbor.h"
+#include "qcbor.h"
 #include <stdio.h>
 
 #define EI_SENSOR_AQ_STREAM FILE

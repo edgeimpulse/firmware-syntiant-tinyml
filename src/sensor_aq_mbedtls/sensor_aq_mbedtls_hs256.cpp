@@ -28,14 +28,14 @@
  */
 
 #include <string.h>
-#include "../firmware-sdk/sensor_aq.h"
+#include "firmware-sdk/sensor_aq.h"
 // #include "mbedtls/md.h"
 // #include "mbedtls/sha256.h"
 //#include "mbed_trace.h"
 // #include "ei_mbedtls_md.h"
 
 //#ifdef MBEDTLS_MD_C
-#include "../edge-impulse-sdk/porting/ei_classifier_porting.h"
+#include "edge-impulse-sdk/porting/ei_classifier_porting.h"
 
 typedef struct {
     // mbedtls_md_context_t md_ctx;
