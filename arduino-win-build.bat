@@ -62,8 +62,8 @@ goto :COMMON_EXIT
 
 :ALL
     echo Building %PROJECT%
-    echo %ARDUINO_CLI% compile --fqbn %BOARD% --build-property "build.extra_flags=%DEFINE% %INCLUDE%" %PROJECT% --output-dir .
-    %ARDUINO_CLI% compile --fqbn %BOARD% --build-property "build.extra_flags=%DEFINE% %INCLUDE%" %PROJECT% --output-dir .
+    echo %ARDUINO_CLI% compile --fqbn %BOARD% --build-property "build.extra_flags=%DEFINE% %INCLUDE%"  --build-property "compiler.cpp.extra_flags=%CPP_FLAGS%" %PROJECT% --output-dir .
+    %ARDUINO_CLI% compile --fqbn %BOARD% --build-property "build.extra_flags=%DEFINE% %INCLUDE%" --build-property "compiler.cpp.extra_flags=%CPP_FLAGS%" %PROJECT% --output-dir .
     echo Flashing %PROJECT%
     echo %ARDUINO_CLI% upload -p %found_com% --fqbn %BOARD% --input-dir .
     %ARDUINO_CLI% upload -p %found_com% --fqbn %BOARD% --input-dir .
