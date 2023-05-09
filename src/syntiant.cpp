@@ -276,12 +276,21 @@ void ndpInt()
 
 void syntiant_get_imu(float *dest_imu)
 {
+    uint8_t mod = 0;
     while(imu_active){};
 
     imu_active = true;
 
     for (int i = 0; i < 36; i++) {
-        dest_imu[i] = (float)(imu[i] * 2 / 32768.f) * CONVERT_G_TO_MS2;
+        mod = (i % 6);
+        // gyr first
+        if (mod < 3) {
+            dest_imu[i] = (float)(imu[i] / 32768.f) * 250.0f;
+        }
+        else {  // acc            
+            dest_imu[i] = (float)(imu[i] * 2 / 32768.f) * CONVERT_G_TO_MS2;
+        }
+        
     }
 
     imu_active = false;
@@ -1244,4 +1253,14 @@ void syntiant_loop(void)
     runManagementCommand();
 
     timer4.enableInterrupt(true); // enable 1mS timer interrupt
+}
+
+/**
+ * @brief Stop and start timer 4 interrupt
+ * 
+ * @param turn 
+ */
+void timer_4_handling(bool turn)
+{
+    timer4.enableInterrupt(turn); // disable 1mS timer interrupt
 }

@@ -24,24 +24,32 @@
 
 #include <stdint.h>
 #include "model_metadata.h"
+
+
 #include "edge-impulse-sdk/classifier/ei_model_types.h"
+#include "edge-impulse-sdk/classifier/inferencing_engines/engines.h"
 
-const char* ei_classifier_inferencing_categories[] = { "go", "stop", "z_openset" };
+const char* ei_classifier_inferencing_categories[] = { "no", "noise", "yes" };
 
-uint8_t ei_dsp_config_9_axes[] = { 0 };
-const uint32_t ei_dsp_config_9_axes_size = 1;
-ei_dsp_config_audio_syntiant_t ei_dsp_config_9 = {
-    1,
-    1,
-    0.032f,
-    0.024f,
-    40,
-    512,
-    0,
-    0,
-    0.96875f,
-    "gpu"
+uint8_t ei_dsp_config_3_axes[] = { 0 };
+const uint32_t ei_dsp_config_3_axes_size = 1;
+ei_dsp_config_audio_syntiant_t ei_dsp_config_3 = {
+    1, // int implementationVersion
+    1, // int length of axes
+    0.032f, // float frame_length
+    0.024f, // float frame_stride
+    40, // int num_filters
+    512, // int fft_length
+    0, // int low_frequency
+    0, // int high_frequency
+    0.96875f, // float pre_cof
+    "gpu" // select extractor
 };
+
+#define EI_DSP_PARAMS_GENERATED 1
+
+
+
 const ei_model_performance_calibration_t ei_calibration = {
     1, /* integer version number */
     false, /* has configured performance calibration */
@@ -50,5 +58,6 @@ const ei_model_performance_calibration_t ei_calibration = {
     (int32_t)(EI_CLASSIFIER_RAW_SAMPLE_COUNT / ((EI_CLASSIFIER_FREQUENCY > 0) ? EI_CLASSIFIER_FREQUENCY : 1)) * 500, /* Half of model window */
     0   /* Don't use flags */
 };
+
 
 #endif // _EI_CLASSIFIER_MODEL_METADATA_H_

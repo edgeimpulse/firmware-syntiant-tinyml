@@ -86,7 +86,7 @@ void ei_printf_float(float f);
 void ei_printfloat(int n_decimals, int n, ...);
 
 void ei_write_string(char *data, int length);
-void ei_putc(char cChar);
+void ei_putchar(char cChar);
 
 /* Reference to object for external usage ---------------------------------- */
 extern EiDeviceSyntiant EiDevice;

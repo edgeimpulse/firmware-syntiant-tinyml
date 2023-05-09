@@ -416,18 +416,6 @@ void ei_write_string(char *data, int length)
 
 }
 
-/**
- * @brief      Write single character to serial output
- *
- * @param[in]  cChar  The character
- */
-void ei_putc(char cChar)
-{
-    Serial.write(&cChar, 1);
-}
-
-
-
 
 /* Private functions ------------------------------------------------------- */
 static void timer_callback(void *arg)

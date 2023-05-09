@@ -280,10 +280,13 @@ static void at_read_file(char *filename) {
     }
 }
 
+extern void timer_4_handling(bool turn);
+
 static void at_read_buffer(char *start_s, char *length_s, char *baudrate_s) {
     size_t start = (size_t)atoi(start_s);
     size_t length = (size_t)atoi(length_s);
 
+    timer_4_handling(false);    // turn off
     bool success = ei_config_get_context()->read_buffer(start, length, at_read_file_data);
     if (!success) {
         ei_printf("Failed to read from buffer\r\n");
@@ -291,6 +294,7 @@ static void at_read_buffer(char *start_s, char *length_s, char *baudrate_s) {
     else {
         ei_printf("\r\n");
     }
+    timer_4_handling(true); // turn on
 }
 
 static void at_read_raw(char *start_s, char *length_s) {

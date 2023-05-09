@@ -155,9 +155,9 @@ void rx_callback(char c) {
                 else {
                     buffer.setPosition(curr - 1);
 
-                    ei_putc('\033');
+                    ei_putchar('\033');
                     for (size_t ix = 0; ix < controlSequence.size(); ix++) {
-                        ei_putc(controlSequence[ix]);
+                        ei_putchar(controlSequence[ix]);
                     }
                 }
             }
@@ -173,17 +173,17 @@ void rx_callback(char c) {
                 else {
                     buffer.setPosition(curr + 1);
 
-                    ei_putc('\033');
+                    ei_putchar('\033');
                     for (size_t ix = 0; ix < controlSequence.size(); ix++) {
-                        ei_putc(controlSequence[ix]);
+                        ei_putchar(controlSequence[ix]);
                     }
                 }
             }
             else {
                 // not up/down? Execute original control sequence
-                ei_putc('\033');
+                ei_putchar('\033');
                 for (size_t ix = 0; ix < controlSequence.size(); ix++) {
-                    ei_putc(controlSequence[ix]);
+                    ei_putchar(controlSequence[ix]);
                 }
             }
 
@@ -195,8 +195,8 @@ void rx_callback(char c) {
 
     switch (c) {
         case '\r': /* want to run the buffer */
-            ei_putc(c);
-            ei_putc('\n');
+            ei_putchar(c);
+            ei_putchar('\n');
             runBuffer();
             break;
         case '\n': /* Ignore newline as input */
@@ -217,7 +217,7 @@ void rx_callback(char c) {
             size_t buffer_size = buffer.size();            
             if (curr_pos == buffer_size) {
                 buffer.add(c);
-                ei_putc(c);
+                ei_putchar(c);
             }
             else {
                 // super inefficient...

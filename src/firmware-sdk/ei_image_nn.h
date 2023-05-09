@@ -118,7 +118,7 @@ void EiImageNN::run_nn(bool debug)
 
         if(debug) {
             ei_printf("Framebuffer: \r\n");
-            base64_encode((char*)image, image_size, ei_putc);
+            base64_encode((char*)image, image_size, ei_putchar);
             ei_printf("\r\n");
         }
 

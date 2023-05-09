@@ -42,25 +42,25 @@ For building the project:
 
 * For audio support, use:
 ```
-arduino-win-build.bat --build
+./arduino-win-build.bat --build
 ```
 
 * For IMU sensor support, use:
 ```
-arduino-win-build.bat --build --with-imu
+./arduino-win-build.bat --build --with-imu
 ```
 
 
 For flashing use, put the board in boot mode (double click on the reset button when connecting the board to USB, while the orange LED is blinking. In boot mode you should see the red LED fading on and off):
 
 ```
-arduino-win-build.bat --flash
+./arduino-win-build.bat --flash
 ```
 
 
 You can also do both by using:
 ```
-arduino-win-build.bat --all [--with-imu]
+./arduino-win-build.bat --all [--with-imu]
 ```
 
 ## Setup Manually

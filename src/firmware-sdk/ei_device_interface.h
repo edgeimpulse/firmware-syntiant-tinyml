@@ -39,8 +39,6 @@ void ei_serial_setup(void);
 void ei_write_string(char *data, int length);
 
 //TODO: move to a one header with all method requied by FW SDK
-void ei_putc(char cChar);
-//TODO: move to a one header with all method requied by FW SDK
 char ei_getchar();
 
 
