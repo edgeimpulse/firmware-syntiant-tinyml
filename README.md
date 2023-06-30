@@ -86,5 +86,3 @@ You can also do both by using:
     * lib/syntiant_ilib
 
 * Patch the _Arduino USBCore driver_: copy `lib/Arduino USBCore driver/USBCore.cpp` in SAMD package folder (ie: /Users/[USER]/Library/Arduino15/packages/arduino/hardware/samd/1.8.9/cores/arduino/USB/)
-* 
-
