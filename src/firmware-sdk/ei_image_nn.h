@@ -68,8 +68,8 @@ int EiImageNN::cutout_get_data(uint32_t offset, uint32_t length, float *out_ptr)
     while (length != 0) {
         const int R_OFFSET = 0, G_OFFSET = 1, B_OFFSET = 2;
         // clang-format off
-        out_ptr[out_ptr_ix] = 
-            (image[offset + R_OFFSET] << 16) + 
+        out_ptr[out_ptr_ix] =
+            (image[offset + R_OFFSET] << 16) +
             (image[offset + G_OFFSET] << 8) +
             image[offset + B_OFFSET];
         // clang-format on
@@ -131,21 +131,7 @@ void EiImageNN::run_nn(bool debug)
             break;
         }
 
-        // print the predictions
-        ei_printf(
-            "Predictions (DSP: %d ms., Classification: %d ms., Anomaly: %d ms.): \n",
-            result.timing.dsp,
-            result.timing.classification,
-            result.timing.anomaly);
-        for (size_t ix = 0; ix < classifier_label_count; ix++) {
-            ei_printf(
-                "    %s: \t%f\r\n",
-                result.classification[ix].label,
-                result.classification[ix].value);
-        }
-#if EI_CLASSIFIER_HAS_ANOMALY == 1
-        ei_printf("    anomaly score: %f\r\n", result.anomaly);
-#endif
+        display_results(&result);
 
         ei_printf("Starting inferencing in 2 seconds...\n");
 
