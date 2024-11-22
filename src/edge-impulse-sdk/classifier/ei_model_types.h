@@ -32,6 +32,6 @@ typedef struct {
     float detection_threshold;
     uint32_t suppression_ms;
     uint32_t suppression_flags;
-} ei_model_performance_calibration_t;
+} ei_performance_calibration_config_t;
 
 #endif // _EDGE_IMPULSE_MODEL_TYPES_H_

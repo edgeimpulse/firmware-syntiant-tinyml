@@ -50,7 +50,7 @@ ei_dsp_config_audio_syntiant_t ei_dsp_config_3 = {
 
 
 
-const ei_model_performance_calibration_t ei_calibration = {
+const ei_performance_calibration_config_t ei_calibration = {
     1, /* integer version number */
     false, /* has configured performance calibration */
     (int32_t)(EI_CLASSIFIER_RAW_SAMPLE_COUNT / ((EI_CLASSIFIER_FREQUENCY > 0) ? EI_CLASSIFIER_FREQUENCY : 1)) * 1000, /* Model window */
