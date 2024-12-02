@@ -131,7 +131,7 @@ void EiImageNN::run_nn(bool debug)
             break;
         }
 
-        display_results(&result);
+        display_results(&ei_default_impulse, &result);
 
         ei_printf("Starting inferencing in 2 seconds...\n");
 
