@@ -1186,7 +1186,7 @@ void syntiant_loop(void)
             if (detached == 1)
             {
                 detached = 0; // assume attached to host USB
-                Serial2.println("Recommected to USB");
+                Serial2.println("Reconnected to USB");
             }
         }
         else
